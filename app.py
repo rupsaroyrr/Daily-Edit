@@ -1,7 +1,7 @@
+
 from flask import Flask, render_template, request
 
 from news_data import ARTICLES, CATEGORIES
-
 
 app = Flask(__name__)
 

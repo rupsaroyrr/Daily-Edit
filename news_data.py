@@ -1,3 +1,4 @@
+
 CATEGORIES = [
     "All",
     "World",
@@ -7,7 +8,6 @@ CATEGORIES = [
     "Sports",
     "Entertainment"
 ]
-
 
 ARTICLES = [
     {
