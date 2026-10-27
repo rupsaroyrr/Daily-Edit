@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Daily Edit | Your World. Unfiltered.</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Playfair+Display:wght@400;600;700;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header class="masthead">
+        <div class="masthead-top">
+            <span class="masthead-date">Tuesday, 27 October 2026</span>
+            <span class="masthead-edition">Morning Edition</span>
+        </div>
+
+        <h1 class="site-title">The Daily Edit</h1>
+        <p class="tagline">Your World. Unfiltered.</p>
+
+        <div class="masthead-rule"></div>
+    </header>
+
+    <nav class="category-bar" aria-label="News categories">
+        <div class="category-links">
+            {% for category in categories %}
+                <a
+                    class="category-link {% if category == selected_category %}active{% endif %}"
+                    href="{{ url_for('home', category=category, q=search_query) }}"
+                >
+                    {{ category }}
+                </a>
+            {% endfor %}
+        </div>
+    </nav>
+
+    <main class="container">
+
+        <section class="search-section">
+            <form class="search-form" method="GET" action="{{ url_for('home') }}">
+                <input
+                    type="hidden"
+                    name="category"
+                    value="{{ selected_category }}"
+                >
+
+                <label class="visually-hidden" for="search-input">
+                    Search headlines
+                </label>
+
+                <input
+                    id="search-input"
+                    class="search-input"
+                    type="text"
+                    name="q"
+                    value="{{ search_query }}"
+                    placeholder="Search headlines, topics, or categories"
+                >
+
+                <button class="search-button" type="submit">Search</button>
+
+                {% if search_query or selected_category != "All" %}
+                    <a class="clear-button" href="{{ url_for('home') }}">Clear</a>
+                {% endif %}
+            </form>
+
+            <p class="result-count">
+                Showing {{ result_count }} article{% if result_count != 1 %}s{% endif %}
+                {% if selected_category != "All" %} in {{ selected_category }}{% endif %}
+                {% if search_query %} for “{{ search_query }}”{% endif %}
+            </p>
+        </section>
+
+        {% if articles %}
+
+            {% if featured_article %}
+                <section class="featured-section">
+                    <article class="featured-card">
+                        <div class="featured-label">Featured Story</div>
+
+                        <span class="article-category">
+                            {{ featured_article.category }}
+                        </span>
+
+                        <h2 class="featured-title">
+                            <a href="{{ featured_article.url }}" target="_blank" rel="noopener">
+                                {{ featured_article.title }}
+                            </a>
+                        </h2>
+
+                        <p class="featured-summary">
+                            {{ featured_article.summary }}
+                        </p>
+
+                        <div class="article-meta">
+                            <span>{{ featured_article.source }}</span>
+                            <span>{{ featured_article.published }}</span>
+                        </div>
+
+                        <a
+                            class="read-link"
+                            href="{{ featured_article.url }}"
+                            target="_blank"
+                            rel="noopener"
+                        >
+                            Read Original Article
+                        </a>
+                    </article>
+                </section>
+            {% endif %}
+
+            {% if highlight_articles %}
+                <section class="highlights-section">
+                    <h3 class="section-title">Highlights</h3>
+
+                    <div class="highlight-grid">
+                        {% for article in highlight_articles %}
+                            <article class="highlight-card">
+                                <span class="article-category">
+                                    {{ article.category }}
+                                </span>
+
+                                <h4 class="highlight-title">
+                                    <a href="{{ article.url }}" target="_blank" rel="noopener">
+                                        {{ article.title }}
+                                    </a>
+                                </h4>
+
+                                <p class="highlight-summary">
+                                    {{ article.summary }}
+                                </p>
+
+                                <div class="article-meta">
+                                    <span>{{ article.source }}</span>
+                                    <span>{{ article.published }}</span>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if more_articles %}
+                <section class="more-section">
+                    <h3 class="section-title">More Headlines</h3>
+
+                    <div class="more-grid">
+                        {% for article in more_articles %}
+                            <article class="more-card">
+                                <span class="article-category">
+                                    {{ article.category }}
+                                </span>
+
+                                <h4 class="more-title">
+                                    <a href="{{ article.url }}" target="_blank" rel="noopener">
+                                        {{ article.title }}
+                                    </a>
+                                </h4>
+
+                                <p class="more-summary">
+                                    {{ article.summary }}
+                                </p>
+
+                                <div class="article-meta">
+                                    <span>{{ article.source }}</span>
+                                    <span>{{ article.published }}</span>
+                                </div>
+
+                                <a
+                                    class="read-link small"
+                                    href="{{ article.url }}"
+                                    target="_blank"
+                                    rel="noopener"
+                                >
+                                    Read Original
+                                </a>
+                            </article>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+        {% else %}
+            <section class="empty-state">
+                <h2>No stories found</h2>
+                <p>Try another keyword or choose a different category.</p>
+                <a class="clear-button" href="{{ url_for('home') }}">Return to front page</a>
+            </section>
+        {% endif %}
+
+    </main>
+
+    <footer class="site-footer">
+        <p class="footer-title">The Daily Edit</p>
+        <p class="footer-text">
+            A minimalist digital newspaper project built with Flask, HTML, CSS, and JavaScript.
+        </p>
+        <p class="footer-text small">
+            All articles and links are samples for demonstration purposes.
+        </p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
